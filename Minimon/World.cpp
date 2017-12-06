@@ -10,7 +10,8 @@ World::World(sf::RenderWindow& window)
 		2000.f)
 	, mSpawnPosition(
 		mWorldView.getSize().x / 2.f,
-		mWorldBounds.height - mWorldView.getSize().y)
+		mWorldBounds.height - mWorldView.getSize().y),
+	tileSize(64)
 {
 	mWorldView.setCenter(mSpawnPosition);
 }

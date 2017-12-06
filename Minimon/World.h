@@ -29,4 +29,5 @@ private:
 
 	sf::FloatRect						mWorldBounds;
 	sf::Vector2f						mSpawnPosition;
+	int									tileSize;
 };
