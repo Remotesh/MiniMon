@@ -13,6 +13,7 @@ public:
 private:
 	void		loadTextures();
 	void		buildScene();
+	void		resolveCollision();
 
 private:
 	enum Layer {

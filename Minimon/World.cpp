@@ -40,3 +40,8 @@ void World::update(sf::Time dt)
 	mSceneGraph.update(dt);
 	*/
 }
+
+void World::resolveCollision()
+{
+
+}
