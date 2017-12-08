@@ -20,6 +20,7 @@ private:
 		Tiles,
 		Items,
 		Objects,
+		Grid,
 		LayerCount
 	};
 

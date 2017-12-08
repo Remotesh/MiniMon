@@ -11,6 +11,7 @@ namespace Textures
 		Enemy,
 		HealthPotion,
 		Bomb,
+		Grid,
 		StoneTile,
 		StoneWall,
 		Grass,
