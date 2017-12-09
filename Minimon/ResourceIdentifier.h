@@ -8,11 +8,7 @@ namespace Textures
 	enum ID
 	{
 		Nothing,
-		Grass,
-		GrassWall,
-		Dirt,
-		StoneTile,
-		StoneWall,
+		Tiles,
 		PlayerCharacter,
 		Enemy,
 		Grid,
