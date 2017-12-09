@@ -7,14 +7,15 @@ namespace Textures
 {
 	enum ID
 	{
-		PlayerCharacter,
-		Enemy,
-		HealthPotion,
-		Bomb,
-		Grid,
+		Nothing,
+		Grass,
+		GrassWall,
+		Dirt,
 		StoneTile,
 		StoneWall,
-		Grass,
+		PlayerCharacter,
+		Enemy,
+		Grid,
 	};
 }
 

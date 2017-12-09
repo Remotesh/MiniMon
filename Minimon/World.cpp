@@ -19,7 +19,10 @@ World::World(sf::RenderWindow& window)
 
 void World::draw()
 {
+	// Worldview To be centered on player
 	mWindow.setView(mWorldView);
+
+
 	//mWindow.draw(mSceneGraph);
 }
 

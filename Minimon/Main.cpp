@@ -10,6 +10,19 @@ int main(int argc, char* argv[])
 	TextureHolder	mTextures;
 
 	mTextures.load(Textures::Grid, "./media/textures/grid.png");
+	mTextures.load(Textures::PlayerCharacter, "./media/textures/goodguy.png");
+	mTextures.load(Textures::Enemy, "./media/textures/badguy.png");
+
+	sf::Font font;
+	font.loadFromFile("./media/fonts/arial.ttf");
+
+	sf::Text stats;
+	stats.setFont(font);
+	stats.setCharacterSize(30);
+	stats.setPosition(50, 50);
+	stats.setFillColor(sf::Color::White);
+
+	std::string statsText;
 
 	sf::Sprite grid;
 
@@ -21,18 +34,15 @@ int main(int argc, char* argv[])
 
 	sf::Vector2f movement = sf::Vector2f(0.f,0.f);
 
-	sf::CircleShape shape;
-	shape.setRadius(20.f);
-	shape.setPosition(320.f, 240.f);
-	shape.setFillColor(sf::Color::Cyan);
 
-	int shapex = 5;
-	int shapey = 5;
+	sf::Sprite goodguy;
+	goodguy.setTexture(mTextures.get(Textures::PlayerCharacter));
 
-	sf::CircleShape secshape;
-	secshape.setRadius(20.f);
-	secshape.setPosition(100.f, 100.f);
-	secshape.setFillColor(sf::Color::Red);
+	sf::Sprite badguy;
+	badguy.setTexture(mTextures.get(Textures::Enemy));
+
+	int shapex = 4;
+	int shapey = 4;
 
 	enum objectid {
 		Tile,
@@ -41,7 +51,7 @@ int main(int argc, char* argv[])
 		ObjectIdCount
 	};
 
-	int world[10][8];
+	int world[20][16];
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -83,9 +93,9 @@ int main(int argc, char* argv[])
 				movement.y = 1.f;
 			}
 
-			//mWorldView.move(movement);
 			world[shapex][shapey] = 0;
-			if (shapex < 10 && shapey < 8)
+
+			if (shapex < 20 && shapey < 16)
 			{
 				shapex += movement.x;
 				shapey += movement.y;
@@ -95,19 +105,21 @@ int main(int argc, char* argv[])
 				shapex -= movement.x;
 				shapey -= movement.y;
 			}
+
 			world[shapex][shapey] = objectid::Player;
+
+			mWorldView.move(movement.x * 64, movement.y * 64);
 
 			movement = sf::Vector2f(0.f, 0.f);
 		}
-		//window.setView(mWorldView);
+		window.setView(mWorldView);
 		window.clear();
-		window.setView(window.getDefaultView());
 		
 		//Apply the grid to view
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 20; i++)
 		{
 			int x = i;
-			for (int j = 0; j < 8; j++)
+			for (int j = 0; j < 16; j++)
 			{
 				int y = j;
 
@@ -115,12 +127,12 @@ int main(int argc, char* argv[])
 				{
 					switch (world[i][j]) {
 					case objectid::Player:
-						shape.setPosition(x * 64, y * 64);
-						window.draw(shape);
+						goodguy.setPosition(x * 64, y * 64);
+						window.draw(goodguy);
 						break;
 					case objectid::Object:
-						secshape.setPosition(x * 64, y * 64);
-						window.draw(secshape);
+						badguy.setPosition(x * 64, y * 64);
+						window.draw(badguy);
 						break;
 					}
 
@@ -131,6 +143,13 @@ int main(int argc, char* argv[])
 				window.draw(grid);
 			}
 		}
+
+		window.setView(window.getDefaultView());
+
+		statsText = "X: " + std::to_string(shapex) + " Y:" + std::to_string(shapey);
+		stats.setString(statsText);
+		window.draw(stats);
+
 		window.display();
 	}
 	return 1;
