@@ -1,8 +1,9 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 #include <iostream>
 
-#include <SFML/Graphics.hpp>
 #include "ResourceHolder.h"
 #include "World.h"
 
@@ -19,15 +20,12 @@ private:
 
 	void	updateStatistics(sf::Time elapsedTime);
 
-	void	handlePlayerInput(sf::Keyboard::Key, bool);
+	void	handleInput(sf::Keyboard::Key, bool);
 
 private:
-	static const float		PlayerSpeed;
 	static const sf::Time	TimePerFrame;
 
 	sf::RenderWindow	mWindow;
-	sf::Sprite			mPlayer;
-	sf::Sprite			mBackground;
 
 	World				mWorld;
 

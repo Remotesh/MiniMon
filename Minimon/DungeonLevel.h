@@ -1,6 +1,6 @@
 #pragma once
 #include "Area.h"
-#include "Dungeon.h"
+#include "DungeonIdentifier.inl"
 
 class DungeonLevel : public Area
 {

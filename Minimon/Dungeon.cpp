@@ -1,5 +1,8 @@
 #include "Dungeon.h"
-#include "DungeonLevel.h"
+
+Dungeon::Dungeon()
+	:dungeonDifficulty(Dungeons::Difficulty::Easy)
+{}
 
 Dungeon::Dungeon(Dungeons::Difficulty diff)
 	:dungeonDifficulty(diff)
@@ -8,13 +11,19 @@ Dungeon::Dungeon(Dungeons::Difficulty diff)
 
 void Dungeon::addLevel(DungeonLevel level)
 {
+	dungeonLayout.push_back(level);
 	numFloors++;
-	dungeonLayout.insert(std::pair<int, DungeonLevel>(numFloors, level));
 }
 
 void Dungeon::generateAddLevel()
 {
 	DungeonLevel newLevel;
+	addLevel(newLevel);
+}
+
+void Dungeon::generateAddLevel(int w, int h, Dungeons::Type leveltype, Dungeons::SubType levelsubtype)
+{
+	DungeonLevel newLevel = DungeonLevel(w, h, leveltype, levelsubtype);
 	addLevel(newLevel);
 }
 
@@ -26,4 +35,12 @@ void Dungeon::setDifficulty(Dungeons::Difficulty diff)
 Dungeons::Difficulty Dungeon::getDifficulty()
 {
 	return dungeonDifficulty;
+}
+
+DungeonLevel& Dungeon::getDungeonLevel(int num)
+{
+	if (num <= numFloors)
+	{
+		return dungeonLayout.at(num);
+	}
 }

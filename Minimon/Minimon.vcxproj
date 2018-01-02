@@ -165,11 +165,13 @@
     <ClCompile Include="DungeonLevel.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="PlayerCharacter.cpp" />
+    <ClCompile Include="SpriteSheet.cpp" />
+    <ClCompile Include="Test.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Area.h" />
+    <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="Dungeon.h" />
     <ClInclude Include="DungeonLevel.h" />
     <ClInclude Include="Game.h" />
@@ -177,14 +179,15 @@
     <ClInclude Include="GraphicsComponent.h" />
     <ClInclude Include="InputComponent.h" />
     <ClInclude Include="PhysicsComponent.h" />
-    <ClInclude Include="PlayerCharacter.h" />
     <ClInclude Include="PlayerInputComponent.h" />
     <ClInclude Include="PlayerPhysicsComponent.h" />
     <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="ResourceIdentifier.h" />
+    <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DungeonIdentifier.inl" />
     <None Include="ResourceHolder.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

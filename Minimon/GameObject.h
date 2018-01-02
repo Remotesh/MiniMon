@@ -1,14 +1,15 @@
 #pragma once
-#include "SFML/Graphics.hpp"
-#include "World.h"
+
+class World;
+
 #include "PhysicsComponent.h"
 #include "GraphicsComponent.h"
-#include "PlayerInputComponent.h"
+#include "InputComponent.h"
 
 class GameObject
 {
 public:
-	int				x, y;
+	int				xCoord, yCoord;
 	sf::Vector2i	velocity;
 
 	GameObject(InputComponent* input,
@@ -26,7 +27,7 @@ public:
 	}
 
 private:
-	InputComponent*		inputComponent;
+	InputComponent*				inputComponent;
 	GraphicsComponent*			graphicsComponent;
 	PhysicsComponent*			physicsComponent;
 

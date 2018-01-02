@@ -1,13 +1,10 @@
 #include "Game.h"
 
-const float Game::PlayerSpeed = 100.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
 	:mWindow(sf::VideoMode(640, 480), "Game")
 	, mWorld(mWindow)
-	, mPlayer()
-	, mBackground()
 	, mFont()
 	, mStatisticsText()
 	, mStatisticsUpdateTime()
@@ -49,10 +46,10 @@ void Game::processEvents()
 		switch (event.type)
 		{
 		case sf::Event::KeyPressed:
-			handlePlayerInput(event.key.code, true);
+			handleInput(event.key.code, true);
 			break;
 		case sf::Event::KeyReleased:
-			handlePlayerInput(event.key.code, false);
+			handleInput(event.key.code, false);
 			break;
 		case sf::Event::Closed:
 			mWindow.close();
@@ -63,16 +60,12 @@ void Game::processEvents()
 
 void Game::update(sf::Time deltaTime)
 {
-	//sf::Vector2f movement(0.f, 0.f);
-	//mPlayer.move(movement * deltaTime.asSeconds());
-
-
+	mWorld.update(deltaTime);
 }
 
 void Game::render()
 {
 	mWindow.clear();
-	//mWindow.draw(mBackground);
 	mWorld.draw();
 	mWindow.setView(mWindow.getDefaultView());
 	mWindow.draw(mStatisticsText);
@@ -95,7 +88,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 	}
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key keyPressed, bool pressed)
+void Game::handleInput(sf::Keyboard::Key keyPressed, bool pressed)
 {
-
+	
 }

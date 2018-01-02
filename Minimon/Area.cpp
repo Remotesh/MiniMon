@@ -30,7 +30,12 @@ void Area::generateArea()
 	}
 }
 
-int** Area::getArea()
+void Area::setLayout(int** newLayout)
+{
+	layout = newLayout;
+}
+
+int** Area::getLayout()
 {
 	return layout;
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include "ResourceIdentifier.h"
 
 class Area 
 {
@@ -9,7 +8,9 @@ public:
 
 	virtual void generateArea();
 
-	int** getArea();
+	void setLayout(int**);
+
+	int** getLayout();
 
 	int getHeight();
 	int getWidth();
