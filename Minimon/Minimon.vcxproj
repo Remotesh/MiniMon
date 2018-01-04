@@ -171,16 +171,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Area.h" />
+    <ClInclude Include="CommandComponent.h" />
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="Dungeon.h" />
     <ClInclude Include="DungeonLevel.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsComponent.h" />
-    <ClInclude Include="InputComponent.h" />
     <ClInclude Include="PhysicsComponent.h" />
-    <ClInclude Include="PlayerInputComponent.h" />
-    <ClInclude Include="PlayerPhysicsComponent.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="ResourceIdentifier.h" />
     <ClInclude Include="SpriteSheet.h" />

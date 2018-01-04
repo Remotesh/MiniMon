@@ -1,5 +1,6 @@
 
-#include "Game.h";
+#include "Game.h"
+#include "CommandQueue.h"
 
 int main(int argc, char* argv[])
 {
@@ -7,5 +8,9 @@ int main(int argc, char* argv[])
 
 	game.run();
 
-	return 1;
+	std::cout << "Press ENTER to continue...";
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	return 0;
+
 }

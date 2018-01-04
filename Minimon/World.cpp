@@ -1,7 +1,8 @@
 #include "World.h"
 
-World::World(sf::RenderWindow& window)
+World::World(sf::RenderWindow& window, CommandQueue& commands)
 	:mWindow(window)
+	,mCommands(commands)
 	, mWorldView(window.getDefaultView())
 	, mWorldBounds(
 		0.f,
@@ -32,10 +33,13 @@ void World::loadTextures()
 
 void World::test()
 {
+	
+	playerSprite.setTexture(mTextures.get(Textures::PlayerCharacter));
+	activeObjects.insert(std::make_pair(0, (*createPlayer())));
+	activeObjects.at(0).setCoords(3, 3);
+
 	mCurrentDungeon.generateAddLevel(20, 20, Dungeons::Woodlands, Dungeons::Square);
 	mCurrentArea = (Area *) &(mCurrentDungeon.getDungeonLevel(0));
-
-	playerCharacter.setTexture(mTextures.get(Textures::PlayerCharacter));
 
 	grid.setTexture(mTextures.get(Textures::Grid));
 
@@ -112,17 +116,37 @@ void World::draw()
 					break;
 				}
 			}
-
-
 			grid.setPosition(x * 64, y * 64);
 			mWindow.draw(grid);
 		}
 	}
+
+	// move PlayerTexture around where it needs to be
+	playerSprite.setPosition(activeObjects.at(0).xCoord * 64, activeObjects.at(0).yCoord * 64);
+	mWindow.draw(playerSprite);
 }
 
 void World::update(sf::Time dt)
 {
+	int cSize = mCommands.getSize();
+	for (int i = 0; i < cSize; i++)
+	{
+		Command command = mCommands.pop();
+		
+		
+		if (activeObjects.find(command.getId()) != activeObjects.end())
+		{
+			activeObjects.at(command.getId()).update(*this, command.getCommand());
+		}
+		else
+		{
+			if (inactiveObjects.find(command.getId()) != inactiveObjects.end())
+			{
 
+			}
+		}
+		
+	}
 }
 
 void World::resolveCollision()

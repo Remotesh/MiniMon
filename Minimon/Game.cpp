@@ -4,7 +4,7 @@ const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
 	:mWindow(sf::VideoMode(640, 480), "Game")
-	, mWorld(mWindow)
+	, mWorld(mWindow, commands)
 	, mFont()
 	, mStatisticsText()
 	, mStatisticsUpdateTime()
@@ -32,6 +32,7 @@ void Game::run()
 			processEvents();
 			update(TimePerFrame);
 		}
+
 
 		updateStatistics(elapsedTime);
 		render();
@@ -90,5 +91,25 @@ void Game::updateStatistics(sf::Time elapsedTime)
 
 void Game::handleInput(sf::Keyboard::Key keyPressed, bool pressed)
 {
-	
+	if (pressed == true)
+	{
+		switch (keyPressed)
+		{
+		case sf::Keyboard::W:
+			commands.push(Command(clientEntId, 1));
+			break;
+
+		case sf::Keyboard::A:
+			commands.push(Command(clientEntId, 2));
+			break;
+
+		case sf::Keyboard::S:
+			commands.push(Command(clientEntId, 3));
+			break;
+
+		case sf::Keyboard::D:
+			commands.push(Command(clientEntId, 4));
+			break;
+		}
+	}
 }

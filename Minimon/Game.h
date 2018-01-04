@@ -31,9 +31,13 @@ private:
 
 	ResourceHolder<sf::Texture, Textures::ID>		textures;
 
+	CommandQueue		commands;
+
 	sf::Font mFont;
 	sf::Text mStatisticsText;
 	sf::Time mStatisticsUpdateTime;
 
 	std::size_t		mStatisticsNumFrames;
+
+	int clientEntId = 0;
 };

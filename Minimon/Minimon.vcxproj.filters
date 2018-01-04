@@ -53,22 +53,13 @@
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerInputComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicsComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerPhysicsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dungeon.h">
@@ -84,6 +75,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommandQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
