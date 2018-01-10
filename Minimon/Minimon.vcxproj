@@ -170,6 +170,7 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationContainer.h" />
     <ClInclude Include="Area.h" />
     <ClInclude Include="CommandComponent.h" />
     <ClInclude Include="CommandQueue.h" />

@@ -26,7 +26,7 @@ World::World(sf::RenderWindow& window, CommandQueue& commands)
 void World::loadTextures()
 {
 	mTextures.load(Textures::Grid, "./media/textures/grid.png");
-	mTextures.load(Textures::PlayerCharacter, "./media/textures/goodguy.png");
+	mTextures.load(Textures::PlayerCharacter, "./media/textures/smileysheet.png");
 	mTextures.load(Textures::Enemy, "./media/textures/badguy.png");
 	mTextures.load(Textures::Tiles, "./media/textures/tiles.png");
 }
@@ -34,8 +34,7 @@ void World::loadTextures()
 void World::test()
 {
 	
-	playerSprite.setTexture(mTextures.get(Textures::PlayerCharacter));
-	activeObjects.insert(std::make_pair(0, (*createPlayer())));
+	activeObjects.insert(std::make_pair(0, (*createPlayer(&(mTextures.get(Textures::PlayerCharacter))))));
 	activeObjects.at(0).setCoords(3, 3);
 
 	mCurrentDungeon.generateAddLevel(20, 20, Dungeons::Woodlands, Dungeons::Square);
@@ -62,6 +61,7 @@ void World::test()
 void World::draw()
 {
 	// Worldview To be centered on player
+	mWorldView.setCenter(sf::Vector2f(64 * activeObjects.at(0).xCoord, 64 * activeObjects.at(0).yCoord));
 	mWindow.setView(mWorldView);
 	//Apply the grid to view
 	for (int i = 0; i < mCurrentArea->getWidth(); i++)
@@ -122,30 +122,45 @@ void World::draw()
 	}
 
 	// move PlayerTexture around where it needs to be
-	playerSprite.setPosition(activeObjects.at(0).xCoord * 64, activeObjects.at(0).yCoord * 64);
-	mWindow.draw(playerSprite);
+	sf::Sprite charSprite = (activeObjects.at(0).draw());
+	charSprite.setPosition(activeObjects.at(0).xCoord * 64, activeObjects.at(0).yCoord * 64);
+
+	mWindow.draw(charSprite);
+
 }
 
 void World::update(sf::Time dt)
 {
 	int cSize = mCommands.getSize();
-	for (int i = 0; i < cSize; i++)
+	if (cSize != 0)
 	{
-		Command command = mCommands.pop();
-		
-		
-		if (activeObjects.find(command.getId()) != activeObjects.end())
+		for (int i = 0; i < cSize; i++)
 		{
-			activeObjects.at(command.getId()).update(*this, command.getCommand());
-		}
-		else
-		{
-			if (inactiveObjects.find(command.getId()) != inactiveObjects.end())
-			{
+			Command command = mCommands.pop();
 
+			if (activeObjects.find(command.getId()) != activeObjects.end())
+			{
+				activeObjects.at(command.getId()).update(*this, command.getCommand(), dt);
+			}
+			else
+			{
+				if (inactiveObjects.find(command.getId()) != inactiveObjects.end())
+				{
+					inactiveObjects.at(command.getId()).update(*this, command.getCommand(), dt);
+				}
 			}
 		}
-		
+	}
+	else
+	{
+		for (int i = 0; i < activeObjects.size(); i++)
+		{
+			activeObjects.at(i).update(*this, 0, dt);
+		}
+		for (int i = 0; i < inactiveObjects.size(); i++)
+		{
+			inactiveObjects.at(i).update(*this, 0, dt);
+		}
 	}
 }
 

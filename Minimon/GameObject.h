@@ -11,7 +11,7 @@ class GameObject
 {
 public:
 	int				xCoord = 0, yCoord = 0;
-	sf::Vector2i	velocity;
+	int				status =0;
 
 	GameObject(CommandComponent* commands,
 		PhysicsComponent* physics,
@@ -19,14 +19,19 @@ public:
 		: commandComponent(commands),
 		physicsComponent(physics),
 		graphicsComponent(graphics)
-	{}
+	{};
 
-	void update(World& world, int command) 
+	void update(World& world, int command, sf::Time dt)
 	{
 		commandComponent->update(*this, command);
 		physicsComponent->update(*this, world);
-		graphicsComponent->update(*this);
-	}
+		graphicsComponent->update(*this, dt);
+	};
+
+	sf::Sprite draw()
+	{
+		return *(graphicsComponent->draw());
+	};
 
 	void setCoords(int x, int y)
 	{
@@ -34,8 +39,9 @@ public:
 		yCoord = y;
 	};
 
+
 private:
-	CommandComponent*				commandComponent;
+	CommandComponent*			commandComponent;
 	GraphicsComponent*			graphicsComponent;
 	PhysicsComponent*			physicsComponent;
 

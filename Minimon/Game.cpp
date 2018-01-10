@@ -30,7 +30,7 @@ void Game::run()
 		{
 			timeSinceLastUpdate -= TimePerFrame;
 			processEvents();
-			update(TimePerFrame);
+			update(elapsedTime);
 		}
 
 
@@ -112,4 +112,6 @@ void Game::handleInput(sf::Keyboard::Key keyPressed, bool pressed)
 			break;
 		}
 	}
+	else
+		commands.push(Command(clientEntId, 0));
 }
