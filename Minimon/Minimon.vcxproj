@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Area.cpp" />
+    <ClCompile Include="ConfigLoader.cpp" />
     <ClCompile Include="Dungeon.cpp" />
     <ClCompile Include="DungeonLevel.cpp" />
     <ClCompile Include="Game.cpp" />
