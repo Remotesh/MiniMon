@@ -6,6 +6,7 @@
 
 #include "ResourceHolder.h"
 #include "World.h"
+#include "ConfigLoader.h"
 
 class Game
 {
@@ -32,6 +33,8 @@ private:
 	ResourceHolder<sf::Texture, Textures::ID>		textures;
 
 	CommandQueue		commands;
+
+	ConfigLoader			config;
 
 	sf::Font mFont;
 	sf::Text mStatisticsText;

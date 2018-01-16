@@ -60,7 +60,10 @@ public:
 		if ((*dt) > animationDelay)
 		{
 			if (curAnimationFrame == (animationFrames - 1))
+			{
 				resetAnimation();
+				*dt = 0;
+			}
 			else
 			{
 				curAnimationFrame++;

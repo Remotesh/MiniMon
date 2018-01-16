@@ -9,6 +9,7 @@ Game::Game()
 	, mStatisticsText()
 	, mStatisticsUpdateTime()
 	, mStatisticsNumFrames(0)
+	, config("config.cfg")
 {
 
 	mFont.loadFromFile("./media/fonts/arial.ttf");
@@ -91,27 +92,5 @@ void Game::updateStatistics(sf::Time elapsedTime)
 
 void Game::handleInput(sf::Keyboard::Key keyPressed, bool pressed)
 {
-	if (pressed == true)
-	{
-		switch (keyPressed)
-		{
-		case sf::Keyboard::W:
-			commands.push(Command(clientEntId, 1));
-			break;
-
-		case sf::Keyboard::A:
-			commands.push(Command(clientEntId, 2));
-			break;
-
-		case sf::Keyboard::S:
-			commands.push(Command(clientEntId, 3));
-			break;
-
-		case sf::Keyboard::D:
-			commands.push(Command(clientEntId, 4));
-			break;
-		}
-	}
-	else
-		commands.push(Command(clientEntId, 0));
+	commands.push(Command(clientEntId, config.processInput(keyPressed, pressed)));
 }

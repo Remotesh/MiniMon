@@ -27,7 +27,7 @@ void World::loadTextures()
 {
 	mTextures.load(Textures::Grid, "./media/textures/grid.png");
 	mTextures.load(Textures::PlayerCharacter, "./media/textures/smileysheet.png");
-	mTextures.load(Textures::Enemy, "./media/textures/badguy.png");
+	mTextures.load(Textures::Enemy, "./media/textures/squareysheet.png");
 	mTextures.load(Textures::Tiles, "./media/textures/tiles.png");
 }
 
@@ -122,10 +122,13 @@ void World::draw()
 	}
 
 	// move PlayerTexture around where it needs to be
-	sf::Sprite charSprite = (activeObjects.at(0).draw());
-	charSprite.setPosition(activeObjects.at(0).xCoord * 64, activeObjects.at(0).yCoord * 64);
 
-	mWindow.draw(charSprite);
+	for (int i = 0; i < activeObjects.size(); i++)
+	{
+		sf::Sprite charSprite = (activeObjects.at(i).draw());
+		charSprite.setPosition(activeObjects.at(i).xCoord * 64, activeObjects.at(i).yCoord * 64);
+		mWindow.draw(charSprite);
+	}
 
 }
 

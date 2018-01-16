@@ -86,6 +86,9 @@
     <ClInclude Include="AnimationContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConfigLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ResourceHolder.inl">
