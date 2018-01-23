@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameObject.h"
-#include "SpriteSheet.h"
 #include "AnimationContainer.h"
 
 class PlayerCommandComponent : public CommandComponent 
@@ -16,40 +15,14 @@ public:
 			3 Moving down
 			4 Moving right
 		*/
-		switch (command)
-		{
-		case 0:
-			object.status = 0;
-			break;
-		case 1:
-			object.status = 1;
-			object.yCoord--;
-			break;
-		case 2:
-			object.status = 2;
-			object.xCoord--;
-			break;
-		case 3:
-			object.status = 3;
-			object.yCoord++;
-			break;
-		case 4:
-			object.status = 4;
-			object.xCoord++;
-			break;
-		default:
-			break;
-		}
+		object.status = command;
 	};
 };
 
 class PlayerPhysicsComponent : public PhysicsComponent
 {
 public:
-	virtual void update(GameObject& obj, World& world)
-	{
-		// Physics code...
-	}
+	virtual void update(GameObject& object, World& world);
 };
 
 enum PlayerMovement {

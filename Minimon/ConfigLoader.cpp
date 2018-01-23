@@ -295,7 +295,7 @@ void ConfigLoader::rebind(int key, int command)
 
 int ConfigLoader::processInput(sf::Keyboard::Key keyPressed, bool pressed)
 {
-	int command = -1;
+	int command = 0;
 
 	if (pressed == true)
 	{

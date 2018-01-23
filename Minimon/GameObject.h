@@ -6,12 +6,11 @@ class World;
 #include "GraphicsComponent.h"
 #include "CommandComponent.h"
 
-
 class GameObject
 {
 public:
-	int				xCoord = 0, yCoord = 0;
-	int				status =0;
+	int				xCoord = 0, yCoord = 0, prevX, prevY;
+	int				status = 0, weight = -1;
 
 	GameObject(CommandComponent* commands,
 		PhysicsComponent* physics,
@@ -28,6 +27,12 @@ public:
 		graphicsComponent->update(*this, dt);
 	};
 
+	void update(World& world, int command)
+	{
+		commandComponent->update(*this, command);
+		physicsComponent->update(*this, world);
+	};
+
 	sf::Sprite draw()
 	{
 		return *(graphicsComponent->draw());
@@ -35,7 +40,9 @@ public:
 
 	void setCoords(int x, int y)
 	{
+		prevX = xCoord;
 		xCoord = x;
+		prevY = yCoord;
 		yCoord = y;
 	};
 

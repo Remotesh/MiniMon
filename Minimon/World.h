@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <string>
+#include <sstream>
 
 #include "SFML\Graphics.hpp"
 #include "ResourceHolder.h"
@@ -11,19 +13,24 @@
 #include "CommandQueue.h"
 
 #include "GameObject.h"
-
 #include "Player.h"
+
 
 class World : private sf::NonCopyable
 {
 public:
-	explicit	World(sf::RenderWindow& window, CommandQueue& commands);
-	void		update(sf::Time dt);
-	void		draw();
+	explicit		World(sf::RenderWindow& window, CommandQueue& commands);
+	void			update(sf::Time dt);
+	void			draw();
+	void			resolveCollision(GameObject*);
+	Area*			getArea();
+	std::string		getDebug();
 
 private:
 	void		loadTextures();
-	void		resolveCollision();
+
+	void		addObject(GameObject, int, int);
+
 	void		test();
 
 	GameObject* createPlayer(sf::Texture* text)
@@ -53,11 +60,13 @@ private:
 	sf::Sprite*							woodlands = new sf::Sprite[10];
 	sf::Clock							debugClock;
 
+	std::ostringstream					mOss;
+	std::string							mDebugInfo;
+
 	std::map<const int, GameObject>			activeObjects;
 	std::map<const int, GameObject>			inactiveObjects;
 
 
 	sf::FloatRect						mWorldBounds;
-	sf::Vector2f						mSpawnPosition;
 	int									tileSize;
 };

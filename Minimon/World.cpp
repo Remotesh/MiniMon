@@ -1,4 +1,5 @@
 #include "World.h"
+#include "HelperFuncs.h"
 
 World::World(sf::RenderWindow& window, CommandQueue& commands)
 	:mWindow(window)
@@ -9,18 +10,13 @@ World::World(sf::RenderWindow& window, CommandQueue& commands)
 		0.f,
 		mWorldView.getSize().x,
 		2000.f)
-	, mSpawnPosition(
-		mWorldView.getSize().x / 2.f,
-		mWorldBounds.height - mWorldView.getSize().y),
-	tileSize(64),
-	mCurrentDungeon()
+	, tileSize(64)
+	, mCurrentDungeon()
 {
 	loadTextures();
 
 	// Remove Later
 	test();
-
-	//mWorldView.setCenter(mSpawnPosition);
 }
 
 void World::loadTextures()
@@ -33,9 +29,25 @@ void World::loadTextures()
 
 void World::test()
 {
-	
-	activeObjects.insert(std::make_pair(0, (*createPlayer(&(mTextures.get(Textures::PlayerCharacter))))));
+	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 0, 1);
 	activeObjects.at(0).setCoords(3, 3);
+	activeObjects.at(0).weight = 10;
+
+	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 1, 1);
+	activeObjects.at(1).setCoords(3, 4);
+	activeObjects.at(1).weight = 8;
+
+	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 2, 1);
+	activeObjects.at(2).setCoords(5, 4);
+	activeObjects.at(2).weight = 15;
+
+	addObject((*createPlayer(&(mTextures.get(Textures::Enemy)))), 3, 1);
+	activeObjects.at(3).setCoords(6, 6);
+	activeObjects.at(3).weight = -1;
+
+	addObject((*createPlayer(&(mTextures.get(Textures::Enemy)))), 4, 1);
+	activeObjects.at(4).setCoords(1, 1);
+	activeObjects.at(4).weight = 0;
 
 	mCurrentDungeon.generateAddLevel(20, 20, Dungeons::Woodlands, Dungeons::Square);
 	mCurrentArea = (Area *) &(mCurrentDungeon.getDungeonLevel(0));
@@ -134,6 +146,8 @@ void World::draw()
 
 void World::update(sf::Time dt)
 {
+	mDebugInfo = "-1";
+	mOss.str("");
 	int cSize = mCommands.getSize();
 	if (cSize != 0)
 	{
@@ -156,18 +170,107 @@ void World::update(sf::Time dt)
 	}
 	else
 	{
-		for (int i = 0; i < activeObjects.size(); i++)
+		std::map<const int, GameObject>	::iterator it;
+		for (it = activeObjects.begin(); it != activeObjects.end(); it++)
 		{
-			activeObjects.at(i).update(*this, 0, dt);
+			it->second.update(*this, 0, dt);
 		}
-		for (int i = 0; i < inactiveObjects.size(); i++)
+		
+		for (it = inactiveObjects.begin(); it != inactiveObjects.end(); it++)
 		{
-			inactiveObjects.at(i).update(*this, 0, dt);
+			it->second.update(*this, 0, dt);
+		}
+
+	}
+	
+}
+
+void World::addObject(GameObject object, int id, int type)
+{
+
+	if (type == 0)
+	{
+		inactiveObjects.insert(std::make_pair(id, object));
+	}
+	else if (type == 1)
+	{
+		activeObjects.insert(std::make_pair(id, object));
+	}
+}
+
+void World::resolveCollision(GameObject* object)
+{
+	std::map<const int, GameObject>	::iterator it;
+	for (it = activeObjects.begin(); it != activeObjects.end(); it++)
+	{
+
+		if(object != &(it->second))
+		{
+			if (object->xCoord == it->second.xCoord && object->yCoord == it->second.yCoord)
+			{
+				/*
+				Weight Meaning / Caveats
+				-1	- Unmoveable Walls and they should never have a non 0 status
+				0	- Can co-exist
+				*/
+				if (it->second.weight == -1)
+				{
+					switch (object->status)
+					{
+					case 1:
+						object->update(*this, 3);
+						break;
+					case 2:
+						object->update(*this, 4);
+						break;
+					case 3:
+						object->update(*this, 1);
+						break;
+					case 4:
+						object->update(*this, 2);
+						break;
+					}
+				}
+
+				if (object->weight != 0)
+				{
+					if (it->second.weight > 0 && (object->weight > it->second.weight))
+					{
+						it->second.update(*this, object->status);
+					}
+					else if (it->second.weight > 0 && (object->weight < it->second.weight))
+					{
+						switch (object->status)
+						{
+						case 1:
+							object->update(*this, 3);
+							break;
+						case 2:
+							object->update(*this, 4);
+							break;
+						case 3:
+							object->update(*this, 1);
+							break;
+						case 4:
+							object->update(*this, 2);
+							break;
+						}
+					}
+				}
+
+				mOss << "Weight " << (object->weight) << " Status " << (object->status) << " Collided " << "Weight " << (it->second.weight) << " Status " << (it->second.status) << "\n";
+				mDebugInfo = mOss.str();
+			}
 		}
 	}
 }
 
-void World::resolveCollision()
+Area* World::getArea()
 {
+	return mCurrentArea;
+}
 
+std::string World::getDebug()
+{
+	return mDebugInfo;
 }

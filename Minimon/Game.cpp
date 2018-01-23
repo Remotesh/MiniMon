@@ -63,6 +63,8 @@ void Game::processEvents()
 void Game::update(sf::Time deltaTime)
 {
 	mWorld.update(deltaTime);
+	if (mWorld.getDebug() != "-1")
+		std::cout << mWorld.getDebug() << std::endl;
 }
 
 void Game::render()

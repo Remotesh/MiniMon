@@ -34,7 +34,7 @@ private:
 
 	CommandQueue		commands;
 
-	ConfigLoader			config;
+	ConfigLoader		config;
 
 	sf::Font mFont;
 	sf::Text mStatisticsText;
