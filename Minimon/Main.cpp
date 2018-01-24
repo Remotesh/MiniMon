@@ -7,7 +7,6 @@ int main(int argc, char* argv[])
 
 	game.run();
 
-
 	std::cout << "Press ENTER to continue...";
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 

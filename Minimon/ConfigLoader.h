@@ -43,8 +43,8 @@ public:
 
 
 private:
-	char* fileName;
-	std::map<int, int> keyBindings;
+	char*				fileName = NULL;
+	std::map<int, int>	keyBindings;
 	const static std::unordered_map<std::string, keyCommandActions> keyCommandActionsMap;
 	
 };

@@ -11,7 +11,7 @@ public:
 
 	void setupSpriteSheet(int w, int h, int r, int c, sf::Texture*);
 	
-	sf::Texture* spriteSheet;
+	sf::Texture* spriteSheet = NULL;
 	int width, height, rows, cols;
 
 };

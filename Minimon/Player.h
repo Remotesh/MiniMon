@@ -83,11 +83,11 @@ public:
 private:
 	int spriteWidth = 64, spriteHeight = 64, numSpriteRows = 4, numSpriteCols = 4;
 	
-	sf::Texture*			playerTexture;
-	SpriteSheet				playerSpriteSheet = SpriteSheet(spriteWidth, spriteHeight, numSpriteRows, numSpriteCols, playerTexture);
-	AnimationContainer		playerAnimations = AnimationContainer(&playerSpriteSheet);
+	sf::Texture*			playerTexture		= NULL;
+	SpriteSheet				playerSpriteSheet	= SpriteSheet(spriteWidth, spriteHeight, numSpriteRows, numSpriteCols, playerTexture);
+	AnimationContainer		playerAnimations	= AnimationContainer(&playerSpriteSheet);
 	sf::Sprite				playerSprite;
-	sf::IntRect				playerRect = sf::IntRect(0,0,spriteWidth, spriteHeight);
-	int						animElapsed = 0;
+	sf::IntRect				playerRect			= sf::IntRect(0,0,spriteWidth, spriteHeight);
+	int						animElapsed			= 0;
 };
 

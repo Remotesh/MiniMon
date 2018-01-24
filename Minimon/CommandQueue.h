@@ -119,7 +119,7 @@ public:
 	};
 	
 private:
-	Command* queue;
+	Command* queue			= NULL;
 
 	int queueSize			= 0;
 	int currentLocation		= 0;

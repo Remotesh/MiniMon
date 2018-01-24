@@ -48,8 +48,33 @@ public:
 
 
 private:
-	CommandComponent*			commandComponent;
-	GraphicsComponent*			graphicsComponent;
-	PhysicsComponent*			physicsComponent;
+	CommandComponent*			commandComponent	= NULL;
+	GraphicsComponent*			graphicsComponent	= NULL;
+	PhysicsComponent*			physicsComponent	= NULL;
 
+};
+
+struct GObjectPointer
+{
+	GameObject* object = NULL;
+	int* xCoord = &(object->xCoord);
+	int* yCoord = &(object->yCoord);
+};
+
+struct GObjectPointerArray
+{
+	GObjectPointer* gOPArray = NULL;
+	int size = 0;
+
+	void add(GObjectPointer gOPtr)
+	{
+		size++;
+		GObjectPointer* newArray = new GObjectPointer[size];
+		for (int i = 0; i < (size - 1); i++)
+		{
+			newArray[i] = gOPArray[i];
+		}
+		newArray[(size - 1)] = gOPtr;
+		gOPArray = newArray;
+	}
 };

@@ -27,7 +27,10 @@ public:
 	std::string		getDebug();
 
 private:
-	void		loadTextures();
+	void			loadTextures();
+
+	GObjectPointer*				checkCoord(int, int);
+	GObjectPointerArray			collisionLine(int, int, int);
 
 	void		addObject(GameObject, int, int);
 
@@ -52,7 +55,7 @@ private:
 	sf::View							mWorldView;
 	TextureHolder						mTextures;
 	CommandQueue&						mCommands;
-	Area*								mCurrentArea;
+	Area*								mCurrentArea = NULL;
 	Dungeon								mCurrentDungeon;
 
 	//Removed Later
@@ -61,10 +64,10 @@ private:
 	sf::Clock							debugClock;
 
 	std::ostringstream					mOss;
-	std::string							mDebugInfo;
 
 	std::map<const int, GameObject>			activeObjects;
 	std::map<const int, GameObject>			inactiveObjects;
+	GObjectPointer*							activeCoords	= NULL;
 
 
 	sf::FloatRect						mWorldBounds;

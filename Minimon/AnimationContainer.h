@@ -106,7 +106,7 @@ private:
 	int curAnimationFrame	= 0;
 	// Delay in milliseconds
 	int animationDelay		= 100;
-	sf::IntRect* animation;
+	sf::IntRect* animation	= NULL;
 };
 
 
@@ -172,8 +172,9 @@ public:
 	
 
 private:
-	SpriteSheet* animationSpriteSheet;
-	Animation* animations;
-	int currentAnimation = 0, numAnimations = 0;
+	SpriteSheet*	animationSpriteSheet	= NULL;
+	Animation*		animations				= NULL;
+
+	int		currentAnimation = 0, numAnimations = 0;
 	
 };

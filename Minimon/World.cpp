@@ -35,11 +35,11 @@ void World::test()
 
 	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 1, 1);
 	activeObjects.at(1).setCoords(3, 4);
-	activeObjects.at(1).weight = 8;
+	activeObjects.at(1).weight = 7;
 
 	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 2, 1);
 	activeObjects.at(2).setCoords(5, 4);
-	activeObjects.at(2).weight = 15;
+	activeObjects.at(2).weight = 2;
 
 	addObject((*createPlayer(&(mTextures.get(Textures::Enemy)))), 3, 1);
 	activeObjects.at(3).setCoords(6, 6);
@@ -146,7 +146,6 @@ void World::draw()
 
 void World::update(sf::Time dt)
 {
-	mDebugInfo = "-1";
 	mOss.str("");
 	int cSize = mCommands.getSize();
 	if (cSize != 0)
@@ -195,50 +194,146 @@ void World::addObject(GameObject object, int id, int type)
 	else if (type == 1)
 	{
 		activeObjects.insert(std::make_pair(id, object));
+		GObjectPointer* newList = new GObjectPointer[activeObjects.size()];
+
+		std::map<const int, GameObject>	::iterator it;
+		int i = 0;
+		for (it = activeObjects.begin(); it != activeObjects.end(); it++)
+		{
+			GObjectPointer newPointer;
+			newPointer.object = &it->second;
+			newPointer.xCoord = &newPointer.object->xCoord;
+			newPointer.yCoord = &newPointer.object->yCoord;
+			newList[i] = newPointer;
+			i++;
+		}
+		activeCoords = newList;
 	}
+}
+
+std::string World::getDebug()
+{
+	return mOss.str();
+}
+
+Area* World::getArea()
+{
+	return mCurrentArea;
+}
+
+GObjectPointer* World::checkCoord(int x, int y)
+{
+	GObjectPointer atPosition;
+	atPosition.object = nullptr;
+	for (int i = 0; i < activeObjects.size(); i++)
+	{
+		if ((*(activeCoords[i].xCoord) == x) && (*(activeCoords[i].yCoord) == y))
+		{
+			atPosition = (activeCoords[i]);
+			break;
+		}
+	}
+	return &atPosition;
+}
+
+GObjectPointerArray World::collisionLine(int x, int y, int command)
+{
+	int curx = x;
+	int cury = y;
+	int numAffectedObjects = 0;
+	GObjectPointer*				curlineObject = NULL;
+	GObjectPointerArray			affectedObjects;
+
+	// Cast a line out in the proper direction to grab all the affected objects
+	switch (command)
+	{
+	case 1:
+		cury--;
+		while (cury >= 0)
+		{
+			curlineObject = checkCoord(curx, cury);
+			if (curlineObject->object == nullptr)
+				break;
+			else
+			{
+				affectedObjects.add(*curlineObject);
+			}
+			cury--;
+		}
+		break;
+	case 2:
+		curx--;
+		while (curx >= 0)
+		{
+			curlineObject = checkCoord(curx, cury);
+			if (curlineObject->object == nullptr)
+				break;
+			else
+			{
+				affectedObjects.add(*curlineObject);
+			}
+			curx--;
+		}
+		break;
+	case 3:
+		cury++;
+		while (cury < mCurrentArea->getHeight())
+		{
+			curlineObject = checkCoord(curx, cury);
+			if (curlineObject->object == nullptr)
+				break;
+			else
+			{
+				affectedObjects.add(*curlineObject);
+			}
+			cury++;
+		}
+		break;
+	case 4:
+		curx++;
+		while (curx < mCurrentArea->getWidth())
+		{
+			curlineObject = checkCoord(curx, cury);
+			if (curlineObject->object == nullptr)
+				break;
+			else
+			{
+				affectedObjects.add(*curlineObject);
+			}
+			curx++;
+		}
+		break;
+	}
+
+	return affectedObjects;
 }
 
 void World::resolveCollision(GameObject* object)
 {
-	std::map<const int, GameObject>	::iterator it;
-	for (it = activeObjects.begin(); it != activeObjects.end(); it++)
+	/* Commands for Movement
+	1 - Up
+	2 - Left
+	3 - Down
+	4 - Right
+	*/
+
+	if (object->weight != -1 || object->weight != 0 || object->weight != 1)
 	{
-
-		if(object != &(it->second))
+		std::map<const int, GameObject>	::iterator it;
+		for (it = activeObjects.begin(); it != activeObjects.end(); it++)
 		{
-			if (object->xCoord == it->second.xCoord && object->yCoord == it->second.yCoord)
-			{
-				/*
-				Weight Meaning / Caveats
-				-1	- Unmoveable Walls and they should never have a non 0 status
-				0	- Can co-exist
-				*/
-				if (it->second.weight == -1)
-				{
-					switch (object->status)
-					{
-					case 1:
-						object->update(*this, 3);
-						break;
-					case 2:
-						object->update(*this, 4);
-						break;
-					case 3:
-						object->update(*this, 1);
-						break;
-					case 4:
-						object->update(*this, 2);
-						break;
-					}
-				}
 
-				if (object->weight != 0)
+			if (object != &(it->second))
+			{
+				if (object->xCoord == it->second.xCoord && object->yCoord == it->second.yCoord)
 				{
-					if (it->second.weight > 0 && (object->weight > it->second.weight))
-					{
-						it->second.update(*this, object->status);
-					}
-					else if (it->second.weight > 0 && (object->weight < it->second.weight))
+					/*
+					Weight Meaning / Caveats
+					-1	- Unmoveable Walls and they should never have a non 0 status
+					0	- Low weight items on the ground
+					1	- Small enough to co-exist
+					*/
+					if (it->second.weight == -1)
 					{
 						switch (object->status)
 						{
@@ -256,21 +351,91 @@ void World::resolveCollision(GameObject* object)
 							break;
 						}
 					}
-				}
 
-				mOss << "Weight " << (object->weight) << " Status " << (object->status) << " Collided " << "Weight " << (it->second.weight) << " Status " << (it->second.status) << "\n";
-				mDebugInfo = mOss.str();
+					if (it->second.weight > 1 && (object->weight > it->second.weight))
+					{
+						GObjectPointerArray allObjects = collisionLine(object->xCoord, object->yCoord, object->status);
+						if (allObjects.size != 0)
+						{
+							// Get total weight of all affected objects / see if any walls
+							int totalWeight = it->second.weight;
+							bool noWall = true;
+
+							for (int i = 0; i < allObjects.size; i++)
+							{
+								if (allObjects.gOPArray[i].object != nullptr)
+								{
+									if (allObjects.gOPArray[i].object->weight == -1)
+									{
+										noWall = false;
+										break;
+									}
+									totalWeight += allObjects.gOPArray[i].object->weight;
+								}
+							}
+
+							if (noWall && (object->weight > totalWeight))
+							{
+								for (int i = 0; i < allObjects.size; i++)
+								{
+									if (allObjects.gOPArray[i].object != nullptr)
+									{
+										if (allObjects.gOPArray[i].object->weight > 1)
+											allObjects.gOPArray[i].object->update(*this, object->status);
+									}
+								}
+								it->second.update(*this, object->status);
+							}
+							else
+							{
+								// Reverse Object
+								switch (object->status)
+								{
+								case 1:
+									object->update(*this, 3);
+									break;
+								case 2:
+									object->update(*this, 4);
+									break;
+								case 3:
+									object->update(*this, 1);
+									break;
+								case 4:
+									object->update(*this, 2);
+									break;
+								}
+							}
+						}
+						else
+						{
+							if(object->weight > it->second.weight)
+								it->second.update(*this, object->status);
+						}
+					}
+					else if (object->weight < it->second.weight)
+					{
+						// Reverse Object
+						switch (object->status)
+						{
+						case 1:
+							object->update(*this, 3);
+							break;
+						case 2:
+							object->update(*this, 4);
+							break;
+						case 3:
+							object->update(*this, 1);
+							break;
+						case 4:
+							object->update(*this, 2);
+							break;
+						}
+					}
+
+					mOss << "Weight " << (object->weight) << " Status " << (object->status) << " Collided " << "Weight " << (it->second.weight) << " Status " << (it->second.status) << "\n";
+
+				}
 			}
 		}
 	}
-}
-
-Area* World::getArea()
-{
-	return mCurrentArea;
-}
-
-std::string World::getDebug()
-{
-	return mDebugInfo;
 }
