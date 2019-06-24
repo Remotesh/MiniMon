@@ -4,6 +4,14 @@
 
 class GameObject;
 
+enum DefaultAnimations {
+	Up,
+	Left,
+	Down,
+	Right,
+	Idle
+};
+
 class GraphicsComponent 
 {
 public:

@@ -6,7 +6,7 @@
 class PlayerCommandComponent : public CommandComponent 
 {
 public:
-	virtual void update(GameObject& object, int command)
+	virtual void update(GameObject& object, World& world, int command)
 	{
 		/* Status Breakdown
 			0 Not moving - for animation pausing / reset
@@ -23,14 +23,6 @@ class PlayerPhysicsComponent : public PhysicsComponent
 {
 public:
 	virtual void update(GameObject& object, World& world);
-};
-
-enum PlayerMovement {
-	Up,
-	Left,
-	Down,
-	Right,
-	Idle
 };
 
 class PlayerGraphicsComponent : public GraphicsComponent 
@@ -51,19 +43,19 @@ public:
 			playerAnimations.update(&playerRect, &animElapsed);
 			break;
 		case 1:
-			playerAnimations.changeAnimation(PlayerMovement::Up);
+			playerAnimations.changeAnimation(DefaultAnimations::Up);
 			playerAnimations.update(&playerRect, &animElapsed);
 			break;
 		case 2:
-			playerAnimations.changeAnimation(PlayerMovement::Left);
+			playerAnimations.changeAnimation(DefaultAnimations::Left);
 			playerAnimations.update(&playerRect, &animElapsed);
 			break;
 		case 3:
-			playerAnimations.changeAnimation(PlayerMovement::Down);
+			playerAnimations.changeAnimation(DefaultAnimations::Down);
 			playerAnimations.update(&playerRect, &animElapsed);
 			break;
 		case 4:
-			playerAnimations.changeAnimation(PlayerMovement::Right);
+			playerAnimations.changeAnimation(DefaultAnimations::Right);
 			playerAnimations.update(&playerRect, &animElapsed);
 			break;
 		default:

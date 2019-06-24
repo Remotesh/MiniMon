@@ -22,14 +22,14 @@ public:
 
 	void update(World& world, int command, sf::Time dt)
 	{
-		commandComponent->update(*this, command);
+		commandComponent->update(*this, world, command);
 		physicsComponent->update(*this, world);
 		graphicsComponent->update(*this, dt);
 	};
 
 	void update(World& world, int command)
 	{
-		commandComponent->update(*this, command);
+		commandComponent->update(*this, world, command);
 		physicsComponent->update(*this, world);
 	};
 
