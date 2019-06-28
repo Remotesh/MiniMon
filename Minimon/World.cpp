@@ -27,29 +27,28 @@ void World::loadTextures()
 	mTextures.load(Textures::Tiles, "./media/textures/tiles.png");
 }
 
+// Remove this later, this is just for testing.
 void World::test()
 {
-	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 0, 1);
-	activeObjects.at(0).setCoords(3, 3);
-	activeObjects.at(0).weight = 10;
+	// Player
+	std::cout << "First ID Create Start\n";
+	createGObject(Textures::ID::PlayerCharacter, 0, 1, 3, 3, 10);
+	std::cout << "First ID Create Finish\n";
 
-	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 1, 1);
-	activeObjects.at(1).setCoords(3, 4);
-	activeObjects.at(1).weight = 7;
+	// Test Objects
+	std::cout << "Second ID Create Start\n";
+	createGObject(Textures::ID::PlayerCharacter, 1, 1, 3, 4, 7);
+	std::cout << "Second ID Create Finish\n";
+	createGObject(Textures::ID::PlayerCharacter, 2, 1, 5, 4, 2);
+	std::cout << "Third ID Create Finish\n";
+	createGObject(Textures::ID::Enemy, 3, 1, 6, 6, -1);
+	std::cout << "Fourth ID Create Finish\n";
+	createGObject(Textures::ID::Enemy, 4, 1, 1, 1, 0);
+	std::cout << "Fifth ID Create Finish\n";
 
-	addObject((*createPlayer(&(mTextures.get(Textures::PlayerCharacter)))), 2, 1);
-	activeObjects.at(2).setCoords(5, 4);
-	activeObjects.at(2).weight = 2;
+	std::cout << "Done Creating Test Objects\n";
 
-	addObject((*createPlayer(&(mTextures.get(Textures::Enemy)))), 3, 1);
-	activeObjects.at(3).setCoords(6, 6);
-	activeObjects.at(3).weight = -1;
-
-	addObject((*createPlayer(&(mTextures.get(Textures::Enemy)))), 4, 1);
-	activeObjects.at(4).setCoords(1, 1);
-	activeObjects.at(4).weight = 0;
-
-	mCurrentDungeon.generateAddLevel(20, 20, Dungeons::Woodlands, Dungeons::Square);
+	mCurrentDungeon.generateAddLevel(30, 30, Dungeons::WOODLANDS, Dungeons::RANDOM);
 	mCurrentArea = (Area *) &(mCurrentDungeon.getDungeonLevel(0));
 
 	grid.setTexture(mTextures.get(Textures::Grid));
@@ -67,11 +66,33 @@ void World::test()
 	woodlands[7].setTextureRect(sf::IntRect(63 + 256, 127, tileSize, tileSize));
 	woodlands[8].setTextureRect(sf::IntRect(127 + 256, 127, tileSize, tileSize));
 	woodlands[9].setTextureRect(sf::IntRect(191 + 256, 191, tileSize, tileSize)); // Base Wall
+
+	std::cout << "Done with adding tests\n";
 }
+
+void World::createGObject(int textureID, int objectId, int objectType, int x = 0, int y = 0, int w = -1)
+{
+	commandComponents.emplace_back(ActiveCommandComponent());
+	physicsComponents.emplace_back(ActivePhysicsComponent());
+	graphicsComponents.emplace_back(ActiveGraphicsComponent(&(mTextures.get((Textures::ID)textureID))));
+
+	GameObject newPlayer(&(commandComponents.back()), &(physicsComponents.back()), &(graphicsComponents.back()), objectId, x, y, w);
+
+	addObject(&newPlayer, objectType);
+
+	std::vector<GameObject>::iterator activeIt;
+	for (activeIt = activeObjects.begin(); activeIt != activeObjects.end(); activeIt++)
+	{
+		std::cout << "0";
+		sf::Sprite charSprite = *(activeIt->draw());
+		std::cout << "0\n";
+	}
+};
 
 
 void World::draw()
 {
+
 	// Worldview To be centered on player
 	mWorldView.setCenter(sf::Vector2f(64 * activeObjects.at(0).xCoord, 64 * activeObjects.at(0).yCoord));
 	mWindow.setView(mWorldView);
@@ -135,10 +156,11 @@ void World::draw()
 
 	// move PlayerTexture around where it needs to be
 
-	for (int i = 0; i < activeObjects.size(); i++)
+	std::vector<GameObject>::iterator activeIt;
+	for (activeIt = activeObjects.begin(); activeIt != activeObjects.end(); activeIt++)
 	{
-		sf::Sprite charSprite = (activeObjects.at(i).draw());
-		charSprite.setPosition(activeObjects.at(i).xCoord * 64, activeObjects.at(i).yCoord * 64);
+		sf::Sprite charSprite = *(activeIt->draw());
+		charSprite.setPosition(activeIt->xCoord * 64, activeIt->yCoord * 64);
 		mWindow.draw(charSprite);
 	}
 
@@ -147,67 +169,64 @@ void World::draw()
 void World::update(sf::Time dt)
 {
 	mOss.str("");
+
+	// Process Comamnds first
 	int cSize = mCommands.getSize();
 	if (cSize != 0)
 	{
 		for (int i = 0; i < cSize; i++)
 		{
 			Command command = mCommands.pop();
+			std::vector<GameObject>::iterator it;
+			int found = 0;
 
-			if (activeObjects.find(command.getId()) != activeObjects.end())
+			for (it = activeObjects.begin(); it != activeObjects.end(); it++)
 			{
-				activeObjects.at(command.getId()).update(*this, command.getCommand(), dt);
-			}
-			else
-			{
-				if (inactiveObjects.find(command.getId()) != inactiveObjects.end())
+				if (it->objectId == command.getId())
 				{
-					inactiveObjects.at(command.getId()).update(*this, command.getCommand(), dt);
+					activeObjects.at(command.getId()).update(*this, command.getCommand(), dt);
+					found = 1;
+					break;
+				}
+			}
+
+			if (found != 1)
+			{
+				for (it = inactiveObjects.begin(); it != inactiveObjects.end(); it++)
+				{
+					if (it->objectId == command.getId())
+					{
+						inactiveObjects.at(command.getId()).update(*this, command.getCommand(), dt);
+						break;
+					}
 				}
 			}
 		}
 	}
-	else
-	{
-		std::map<const int, GameObject>	::iterator it;
-		for (it = activeObjects.begin(); it != activeObjects.end(); it++)
-		{
-			it->second.update(*this, 0, dt);
-		}
-		
-		for (it = inactiveObjects.begin(); it != inactiveObjects.end(); it++)
-		{
-			it->second.update(*this, 0, dt);
-		}
 
+	std::vector<GameObject>::iterator it;
+	for (it = activeObjects.begin(); it != activeObjects.end(); it++)
+	{
+		it->update(*this, 0, dt);
+	}
+
+	for (it = inactiveObjects.begin(); it != inactiveObjects.end(); it++)
+	{
+		it->update(*this, 0, dt);
 	}
 	
 }
 
-void World::addObject(GameObject object, int id, int type)
+void World::addObject(GameObject* object, int type)
 {
 
 	if (type == 0)
 	{
-		inactiveObjects.insert(std::make_pair(id, object));
+		inactiveObjects.push_back(*object);
 	}
 	else if (type == 1)
 	{
-		activeObjects.insert(std::make_pair(id, object));
-		GObjectPointer* newList = new GObjectPointer[activeObjects.size()];
-
-		std::map<const int, GameObject>	::iterator it;
-		int i = 0;
-		for (it = activeObjects.begin(); it != activeObjects.end(); it++)
-		{
-			GObjectPointer newPointer;
-			newPointer.object = &it->second;
-			newPointer.xCoord = &newPointer.object->xCoord;
-			newPointer.yCoord = &newPointer.object->yCoord;
-			newList[i] = newPointer;
-			i++;
-		}
-		activeCoords = newList;
+		activeObjects.push_back(*object);
 	}
 }
 
@@ -221,28 +240,34 @@ Area* World::getArea()
 	return mCurrentArea;
 }
 
-GObjectPointer* World::checkCoord(int x, int y)
+// For Testing Remove Later
+DungeonLevel * World::getDungeonLevel()
 {
-	GObjectPointer atPosition;
-	atPosition.object = nullptr;
-	for (int i = 0; i < activeObjects.size(); i++)
+	return &mCurrentDungeon.getDungeonLevel();
+}
+
+GameObject* World::checkCoord(int x, int y)
+{
+	GameObject* atPosition = nullptr;
+
+	std::vector<GameObject>::iterator it;
+	for (it = activeObjects.begin(); it != activeObjects.end(); it++)
 	{
-		if ((*(activeCoords[i].xCoord) == x) && (*(activeCoords[i].yCoord) == y))
+		if ((*it).xCoord == x && (*it).yCoord == y)
 		{
-			atPosition = (activeCoords[i]);
+			atPosition = &*it;
 			break;
 		}
 	}
-	return &atPosition;
+	return atPosition;
 }
 
-GObjectPointerArray World::collisionLine(int x, int y, int command)
+std::vector<GameObject*> World::collisionLine(int x, int y, int command)
 {
 	int curx = x;
 	int cury = y;
-	int numAffectedObjects = 0;
-	GObjectPointer*				curlineObject = NULL;
-	GObjectPointerArray			affectedObjects;
+	GameObject*					curlineObject = NULL;
+	std::vector<GameObject*>	affectedObjects;
 
 	// Cast a line out in the proper direction to grab all the affected objects
 	switch (command)
@@ -252,11 +277,11 @@ GObjectPointerArray World::collisionLine(int x, int y, int command)
 		while (cury >= 0)
 		{
 			curlineObject = checkCoord(curx, cury);
-			if (curlineObject->object == nullptr)
+			if (curlineObject == nullptr)
 				break;
 			else
 			{
-				affectedObjects.add(*curlineObject);
+				affectedObjects.push_back(curlineObject);
 			}
 			cury--;
 		}
@@ -266,11 +291,11 @@ GObjectPointerArray World::collisionLine(int x, int y, int command)
 		while (curx >= 0)
 		{
 			curlineObject = checkCoord(curx, cury);
-			if (curlineObject->object == nullptr)
+			if (curlineObject == nullptr)
 				break;
 			else
 			{
-				affectedObjects.add(*curlineObject);
+				affectedObjects.push_back(curlineObject);
 			}
 			curx--;
 		}
@@ -280,11 +305,11 @@ GObjectPointerArray World::collisionLine(int x, int y, int command)
 		while (cury < mCurrentArea->getHeight())
 		{
 			curlineObject = checkCoord(curx, cury);
-			if (curlineObject->object == nullptr)
+			if (curlineObject == nullptr)
 				break;
 			else
 			{
-				affectedObjects.add(*curlineObject);
+				affectedObjects.push_back(curlineObject);
 			}
 			cury++;
 		}
@@ -294,17 +319,16 @@ GObjectPointerArray World::collisionLine(int x, int y, int command)
 		while (curx < mCurrentArea->getWidth())
 		{
 			curlineObject = checkCoord(curx, cury);
-			if (curlineObject->object == nullptr)
+			if (curlineObject == nullptr)
 				break;
 			else
 			{
-				affectedObjects.add(*curlineObject);
+				affectedObjects.push_back(curlineObject);
 			}
 			curx++;
 		}
 		break;
 	}
-
 	return affectedObjects;
 }
 
@@ -319,13 +343,13 @@ void World::resolveCollision(GameObject* object)
 
 	if (object->weight != -1 || object->weight != 0 || object->weight != 1)
 	{
-		std::map<const int, GameObject>	::iterator it;
-		for (it = activeObjects.begin(); it != activeObjects.end(); it++)
+		std::vector<GameObject>::iterator otherObjectIt;
+		for (otherObjectIt = activeObjects.begin(); otherObjectIt != activeObjects.end(); otherObjectIt++)
 		{
-
-			if (object != &(it->second))
+			// Check passed in object's coords against every other object but otherObjectItself
+			if (object != &*otherObjectIt)
 			{
-				if (object->xCoord == it->second.xCoord && object->yCoord == it->second.yCoord)
+				if (object->xCoord == otherObjectIt->xCoord && object->yCoord == otherObjectIt->yCoord)
 				{
 					/*
 					Weight Meaning / Caveats
@@ -333,7 +357,8 @@ void World::resolveCollision(GameObject* object)
 					0	- Low weight items on the ground
 					1	- Small enough to co-exist
 					*/
-					if (it->second.weight == -1)
+					// If otherObjectIt is a wall move back the calling object as its immovable.
+					if (otherObjectIt->weight == -1)
 					{
 						switch (object->status)
 						{
@@ -352,39 +377,42 @@ void World::resolveCollision(GameObject* object)
 						}
 					}
 
-					if (it->second.weight > 1 && (object->weight > it->second.weight))
+					// If the weight of the pushing object is greater than this otherObjectIt see what we can do
+					if (otherObjectIt->weight > 1 && (object->weight > otherObjectIt->weight))
 					{
-						GObjectPointerArray allObjects = collisionLine(object->xCoord, object->yCoord, object->status);
-						if (allObjects.size != 0)
+						// Take this otherObjectIt and see if it were to move what other objects might it need to move
+						std::vector<GameObject*> affectedObjects = collisionLine(object->xCoord, object->yCoord, object->status);
+						std::vector<GameObject*>::iterator affectedObjectsIt;
+						if (affectedObjects.size() > 0)
 						{
 							// Get total weight of all affected objects / see if any walls
-							int totalWeight = it->second.weight;
+							int totalWeight = otherObjectIt->weight;
 							bool noWall = true;
 
-							for (int i = 0; i < allObjects.size; i++)
+							for (affectedObjectsIt = affectedObjects.begin(); affectedObjectsIt != affectedObjects.end(); affectedObjectsIt++)
 							{
-								if (allObjects.gOPArray[i].object != nullptr)
+								if (*affectedObjectsIt != nullptr)
 								{
-									if (allObjects.gOPArray[i].object->weight == -1)
+									if ((*affectedObjectsIt)->weight == -1)
 									{
 										noWall = false;
 										break;
 									}
-									totalWeight += allObjects.gOPArray[i].object->weight;
+									totalWeight += (*affectedObjectsIt)->weight;
 								}
 							}
 
 							if (noWall && (object->weight > totalWeight))
 							{
-								for (int i = 0; i < allObjects.size; i++)
+								for (affectedObjectsIt = affectedObjects.begin(); affectedObjectsIt != affectedObjects.end(); affectedObjectsIt++)
 								{
-									if (allObjects.gOPArray[i].object != nullptr)
+									if ((*affectedObjectsIt) != nullptr)
 									{
-										if (allObjects.gOPArray[i].object->weight > 1)
-											allObjects.gOPArray[i].object->update(*this, object->status);
+										if ((*affectedObjectsIt)->weight > 1)
+											(*affectedObjectsIt)->update(*this, object->status);
 									}
 								}
-								it->second.update(*this, object->status);
+								otherObjectIt->update(*this, object->status);
 							}
 							else
 							{
@@ -408,11 +436,11 @@ void World::resolveCollision(GameObject* object)
 						}
 						else
 						{
-							if(object->weight > it->second.weight)
-								it->second.update(*this, object->status);
+							if(object->weight > otherObjectIt->weight)
+								otherObjectIt->update(*this, object->status);
 						}
 					}
-					else if (object->weight < it->second.weight)
+					else if (object->weight < otherObjectIt->weight)
 					{
 						// Reverse Object
 						switch (object->status)
@@ -432,7 +460,7 @@ void World::resolveCollision(GameObject* object)
 						}
 					}
 
-					mOss << "Weight " << (object->weight) << " Status " << (object->status) << " Collided " << "Weight " << (it->second.weight) << " Status " << (it->second.status) << "\n";
+					mOss << "Weight " << (object->weight) << " Status " << (object->status) << " Collided " << "Weight " << (otherObjectIt->weight) << " Status " << (otherObjectIt->status) << "\n";
 
 				}
 			}

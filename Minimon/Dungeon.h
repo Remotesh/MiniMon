@@ -13,6 +13,7 @@ public:
 	void generateAddLevel(int, int, Dungeons::Type, Dungeons::SubType);
 	void setDifficulty(Dungeons::Difficulty);
 
+	DungeonLevel& getDungeonLevel();
 	DungeonLevel& getDungeonLevel(int);
 
 	Dungeons::Difficulty getDifficulty();
@@ -20,5 +21,6 @@ public:
 private:
 	std::vector<DungeonLevel> dungeonLayout;
 	int numFloors = 0;
+	int currFloor = 0;
 	Dungeons::Difficulty dungeonDifficulty;
 };

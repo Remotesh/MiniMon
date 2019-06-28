@@ -1,22 +1,23 @@
 namespace Dungeons
 {
 	enum Type {
-		Woodlands,
-		Desert,
-		Cave
+		WOODLANDS,
+		DESERT,
+		CAVE
 	};
 
 	enum SubType {
-		Small,
-		Medium,
-		Large,
-		Square
+		SMALL,
+		MEDIUM,
+		LARGE,
+		SQUARE,
+		RANDOM
 	};
 
 	enum Difficulty {
-		Easy,
-		Normal,
-		Hard,
-		Expert
+		EASY,
+		NORMAL,
+		HARD,
+		EXPERT
 	};
 }

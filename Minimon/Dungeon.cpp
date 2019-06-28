@@ -1,7 +1,7 @@
 #include "Dungeon.h"
 
 Dungeon::Dungeon()
-	:dungeonDifficulty(Dungeons::Difficulty::Easy)
+	:dungeonDifficulty(Dungeons::Difficulty::EASY)
 {}
 
 Dungeon::Dungeon(Dungeons::Difficulty diff)
@@ -37,10 +37,19 @@ Dungeons::Difficulty Dungeon::getDifficulty()
 	return dungeonDifficulty;
 }
 
+DungeonLevel& Dungeon::getDungeonLevel()
+{
+	if (currFloor <= numFloors)
+	{
+		return dungeonLayout.at(currFloor);
+	}
+}
+
 DungeonLevel& Dungeon::getDungeonLevel(int num)
 {
 	if (num <= numFloors)
 	{
+		currFloor = num;
 		return dungeonLayout.at(num);
 	}
 }

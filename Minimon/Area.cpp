@@ -4,6 +4,7 @@ Area::Area()
 	:width(20),
 	height(20)
 {
+	setupLayout();
 	generateArea();
 }
 
@@ -11,6 +12,12 @@ Area::Area(int w, int h)
 	:width(w),
 	height(h)
 {
+	setupLayout();
+}
+
+Area::~Area()
+{
+
 }
 
 void Area::generateArea()
@@ -33,6 +40,27 @@ void Area::generateArea()
 void Area::setLayout(int** newLayout)
 {
 	layout = newLayout;
+}
+
+void Area::setupLayout()
+{
+	layout = new int*[width];
+	for (int i = 0; i < width; i++)
+	{
+		layout[i] = new int[height];
+	}
+}
+
+void Area::freeLayout()
+{
+	if (width > 0 || height > 0)
+	{
+		for (int i = 0; i < width; i++)
+		{
+			delete[] layout[i];
+		}
+		delete[] layout;
+	}
 }
 
 int** Area::getLayout()

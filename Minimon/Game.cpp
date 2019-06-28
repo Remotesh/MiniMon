@@ -94,5 +94,14 @@ void Game::updateStatistics(sf::Time elapsedTime)
 
 void Game::handleInput(sf::Keyboard::Key keyPressed, bool pressed)
 {
-	commands.push(Command(clientEntId, config.processInput(keyPressed, pressed)));
+	// For Testing Remove Later
+	if (keyPressed == sf::Keyboard::Key::R)
+	{
+		mWorld.getDungeonLevel()->randomGen(-1);
+
+	}
+	else
+	{
+		commands.push(Command(clientEntId, config.processInput(keyPressed, pressed)));
+	}
 }

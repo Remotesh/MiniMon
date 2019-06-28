@@ -73,7 +73,7 @@ void testFunctionality()
 		ObjectIdCount
 	};
 
-	DungeonLevel currentLevel = DungeonLevel(20, 30, Dungeons::Woodlands, Dungeons::Square);
+	DungeonLevel currentLevel = DungeonLevel(20, 30, Dungeons::WOODLANDS, Dungeons::SQUARE);
 
 	int** world = currentLevel.getLayout();
 

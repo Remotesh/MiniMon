@@ -42,5 +42,6 @@ private:
 
 	std::size_t		mStatisticsNumFrames;
 
+	// Eventually remove this as this should identify player
 	int clientEntId = 0;
 };

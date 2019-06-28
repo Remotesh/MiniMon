@@ -16,6 +16,8 @@
 #include "Player.h"
 
 
+#include <iostream>
+
 class World : private sf::NonCopyable
 {
 public:
@@ -24,22 +26,20 @@ public:
 	void			draw();
 	void			resolveCollision(GameObject*);
 	Area*			getArea();
+	DungeonLevel*	getDungeonLevel();
 	std::string		getDebug();
 
 private:
 	void			loadTextures();
 
-	GObjectPointer*				checkCoord(int, int);
-	GObjectPointerArray			collisionLine(int, int, int);
+	GameObject*					checkCoord(int, int);
+	std::vector<GameObject*>	collisionLine(int, int, int);
 
-	void		addObject(GameObject, int, int);
+	void		addObject(GameObject *, int);
 
 	void		test();
 
-	GameObject* createPlayer(sf::Texture* text)
-	{
-		return new GameObject(new PlayerCommandComponent(), new PlayerPhysicsComponent(), new PlayerGraphicsComponent(text));
-	};
+	void createGObject(int, int, int, int, int, int);
 
 private:
 	enum Layer {
@@ -65,9 +65,12 @@ private:
 
 	std::ostringstream					mOss;
 
-	std::map<const int, GameObject>			activeObjects;
-	std::map<const int, GameObject>			inactiveObjects;
-	GObjectPointer*							activeCoords	= NULL;
+	std::vector<GameObject>				activeObjects;
+	std::vector<GameObject>				inactiveObjects;
+	
+	std::vector<ActiveCommandComponent>		commandComponents;
+	std::vector<ActivePhysicsComponent>		physicsComponents;
+	std::vector<ActiveGraphicsComponent>	graphicsComponents;
 
 
 	sf::FloatRect						mWorldBounds;

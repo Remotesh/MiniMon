@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "World.h"
 
-void PlayerPhysicsComponent::update(GameObject& object, World& world)
+void ActivePhysicsComponent::update(GameObject& object, World& world)
 {
 	switch (object.status)
 	{

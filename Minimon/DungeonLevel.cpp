@@ -3,7 +3,8 @@
 DungeonLevel::DungeonLevel()
 	: Area()
 {
-	generateArea();
+	setupLayout();
+	generateArea(0);
 }
 
 DungeonLevel::DungeonLevel(int w, int h, Dungeons::Type dungtype, Dungeons::SubType dungsubtype)
@@ -11,10 +12,11 @@ DungeonLevel::DungeonLevel(int w, int h, Dungeons::Type dungtype, Dungeons::SubT
 	dungeonType(dungtype),
 	dungeonSubType(dungsubtype)
 {
-	generateArea();
+	setupLayout();
+	generateArea(0);
 }
 
-void DungeonLevel::generateArea()
+void DungeonLevel::generateArea(int seed = 0)
 {
 	/*
 	Dungeon Type Tileset Ranges
@@ -27,11 +29,11 @@ void DungeonLevel::generateArea()
 	Medium
 	Large
 	Square
+	Random
 	*/
-	int basetile, basewall, topright, topmid, topleft, leftmid, bottomleft, bottommid, bottomright, rightmid;
 
 	switch(dungeonType) {
-	case Dungeons::Type::Woodlands:
+	case Dungeons::Type::WOODLANDS:
 		basetile	= 0;
 		basewall	= 15;
 		topright	= 14;
@@ -43,7 +45,7 @@ void DungeonLevel::generateArea()
 		bottomright	= 8;
 		rightmid	= 7;
 		break;
-	case Dungeons::Type::Desert:
+	case Dungeons::Type::DESERT:
 		basetile	= 16;
 		basewall	= 31;
 		topright	= 30;
@@ -55,7 +57,7 @@ void DungeonLevel::generateArea()
 		bottomright	= 24;
 		rightmid	= 23;
 		break;
-	case Dungeons::Type::Cave:
+	case Dungeons::Type::CAVE:
 		basetile	= 32;
 		basewall	= 47;
 		topright	= 46;
@@ -72,22 +74,16 @@ void DungeonLevel::generateArea()
 		break;
 	};
 
-	layout = new int*[width];
-	for (int i = 0; i < width; i++)
-	{
-		layout[i] = new int[height];
-	}
-
 	// Fill it with Nothing
 	for (int i = 0; i < width; i++)
 	{
 		for (int j = 0; j < height; j++)
 		{
-			layout[i][j] = basetile;
+			layout[i][j] = -1;
 		}
 	}
 
-	if (dungeonSubType == Dungeons::SubType::Square)
+	if (dungeonSubType == Dungeons::SubType::SQUARE)
 	{
 		// Ring off Full Walls
 		for (int i = 0; i < width; i++)
@@ -118,4 +114,71 @@ void DungeonLevel::generateArea()
 		layout[1][height - 2] = bottomleft;
 		layout[width - 2][height - 2] = bottomright;
 	}
+	else if (dungeonSubType == Dungeons::SubType::RANDOM)
+	{
+		randomGen(seed);
+	}
+}
+
+/** Generate level using randomness, takes in a seed in form of int
+	Putting in a seed of -1 will cause it to completely regenerate.
+**/
+void DungeonLevel::randomGen(int seed)
+{
+	if (seed <= 0)
+	{
+		std::srand(time(NULL));
+		if (seed == -1)
+		{
+			// Fill it with Nothing
+			for (int i = 0; i < width; i++)
+			{
+				for (int j = 0; j < height; j++)
+				{
+					layout[i][j] = -1;
+				}
+			}
+		}
+	}
+	else
+	{
+		std::srand(seed);
+	}
+
+	int x = (std::rand() % width);
+	int y = (std::rand() % height);
+	int numSpaces = (std::rand() % (width * height)) + 1;
+	int dir;
+
+	for (int i = 0; i < numSpaces; i++)
+	{
+		if (layout[x][y] <= 0)
+		{
+			layout[x][y] = basetile;
+		}
+		else
+			i--;
+		dir = (std::rand() % 4) + 1;
+		if (dir == 1 && y >= 0 && y < height - 1)
+			y++;
+		else if (dir == 2 && x >= 0 && x < width - 1)
+			x++;
+		else if (dir == 3 && y > 0 && y < height)
+			y--;
+		else if( dir == 4 && x > 0 && x < width)
+			x--;
+	}
+
+	// Encircle with walls.
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			if (layout[i][j] < 0)
+			{
+				layout[i][j] = basewall;
+			}
+		}
+	}
+
 }
